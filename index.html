@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CTG Predictor</title>
+  </head>
+  <body>
+    <h1>CTG Predictor</h1>
+    <p>Enter the 17 CTG features and click Predict.</p>
+
+    <form id="ctg-form">
+      <div>
+        <label for="LB">LB</label>
+        <input id="LB" name="LB" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="AC">AC</label>
+        <input id="AC" name="AC" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="FM">FM</label>
+        <input id="FM" name="FM" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="UC">UC</label>
+        <input id="UC" name="UC" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="ASTV">ASTV</label>
+        <input id="ASTV" name="ASTV" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="MSTV">MSTV</label>
+        <input id="MSTV" name="MSTV" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="ALTV">ALTV</label>
+        <input id="ALTV" name="ALTV" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="MLTV">MLTV</label>
+        <input id="MLTV" name="MLTV" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="DL">DL</label>
+        <input id="DL" name="DL" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="DS">DS</label>
+        <input id="DS" name="DS" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="DP">DP</label>
+        <input id="DP" name="DP" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="Width">Width</label>
+        <input id="Width" name="Width" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="Mode">Mode</label>
+        <input id="Mode" name="Mode" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="Mean">Mean</label>
+        <input id="Mean" name="Mean" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="Median">Median</label>
+        <input id="Median" name="Median" type="number" step="any" required />
+      </div>
+
+      <div>
+        <label for="Variance">Variance</label>
+        <input
+          id="Variance"
+          name="Variance"
+          type="number"
+          step="any"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="Tendency">Tendency</label>
+        <input
+          id="Tendency"
+          name="Tendency"
+          type="number"
+          step="any"
+          required
+        />
+      </div>
+
+      <div>
+        <button type="submit">Predict</button>
+        <button type="button" id="fill-sample">Fill sample</button>
+        <span id="spinner" style="display: none">Predicting...</span>
+      </div>
+    </form>
+
+    <div id="output" style="display: none; margin-top: 12px"></div>
+
+    <script>
+      const form = document.getElementById("ctg-form");
+      const output = document.getElementById("output");
+      const spinner = document.getElementById("spinner");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        output.style.display = "none";
+        spinner.style.display = "";
+
+        const formData = new FormData(form);
+        const payload = {};
+        for (const [k, v] of formData.entries()) {
+          payload[k] = parseFloat(v);
+        }
+
+        try {
+          const res = await fetch("/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const json = await res.json();
+          spinner.style.display = "none";
+
+          if (res.ok && json.prediction) {
+            output.style.display = "";
+            output.textContent = "Prediction: " + json.prediction;
+          } else if (json.error) {
+            output.style.display = "";
+            output.textContent = "Error: " + json.error;
+          } else {
+            output.style.display = "";
+            output.textContent = "Unexpected response: " + JSON.stringify(json);
+          }
+        } catch (err) {
+          spinner.style.display = "none";
+          output.style.display = "";
+          output.textContent = "Request failed: " + err.message;
+        }
+      });
+
+      document.getElementById("fill-sample").addEventListener("click", () => {
+        const sample = {
+          LB: 2,
+          AC: 10,
+          FM: 0,
+          UC: 1,
+          ASTV: 0,
+          MSTV: 30,
+          ALTV: 0,
+          MLTV: 0,
+          DL: 0,
+          DS: 0,
+          DP: 0,
+          Width: 0,
+          Mode: 120,
+          Mean: 120,
+          Median: 120,
+          Variance: 0,
+          Tendency: 0,
+        };
+        Object.entries(sample).forEach(([k, v]) => {
+          const el = document.getElementById(k);
+          if (el) el.value = v;
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import pandas as pd
 import joblib
@@ -9,8 +10,9 @@ app = FastAPI(
     version="1.0"
 )
 
-model = joblib.load("ctg_best_pipeline_XGB.joblib") 
+model = joblib.load("ctg_best_pipeline_XGB.joblib")
 label_map = {0: "Normal", 1: "Suspect", 2: "Pathologic"}
+
 
 class InputData(BaseModel):
     LB: float
@@ -31,9 +33,10 @@ class InputData(BaseModel):
     Variance: float
     Tendency: float
 
+
 @app.get("/")
 def home():
-    return {"message": "CTG Predictor API is running! Go to /docs to test."}
+    return FileResponse("index.html")
 
 
 @app.post("/predict")
