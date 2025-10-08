@@ -1,27 +1,17 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import pandas as pd
 import joblib
 
-# -------------------------------
-# Load your trained model
-# -------------------------------
-model = joblib.load("ctg_best_pipeline_XGB_reduced.joblib")
-
-# Label mapping (numeric → readable output)
-label_map = {0: "Normal", 1: "Suspect", 2: "Pathologic"}
-
-# -------------------------------
-# Initialize FastAPI
-# -------------------------------
 app = FastAPI(
     title="CTG Model Predictor",
     description="Predict fetal state (Normal / Suspect / Pathologic) from CTG input features",
     version="1.0"
 )
 
-# -------------------------------
-# Define input schema (17 features)
-# -------------------------------
+model = joblib.load("ctg_best_pipeline_XGB.joblib") 
+label_map = {0: "Normal", 1: "Suspect", 2: "Pathologic"}
+
 class InputData(BaseModel):
     LB: float
     AC: float
@@ -41,33 +31,29 @@ class InputData(BaseModel):
     Variance: float
     Tendency: float
 
-# -------------------------------
-# Prediction endpoint
-# -------------------------------
+@app.get("/")
+def home():
+    return {"message": "CTG Predictor API is running! Go to /docs to test."}
+
+
 @app.post("/predict")
 def predict(data: InputData):
     try:
-        # Convert input into correct order for the model
-        X = [[
-            data.LB, data.AC, data.FM, data.UC,
-            data.ASTV, data.MSTV, data.ALTV, data.MLTV,
-            data.DL, data.DS, data.DP, data.Width,
-            data.Mode, data.Mean, data.Median,
-            data.Variance, data.Tendency
-        ]]
+        input_dict = {
+            "LB": data.LB, "AC": data.AC, "FM": data.FM, "UC": data.UC,
+            "ASTV": data.ASTV, "MSTV": data.MSTV, "ALTV": data.ALTV, "MLTV": data.MLTV,
+            "DL": data.DL, "DS": data.DS, "DP": data.DP, "Width": data.Width,
+            "Mode": data.Mode, "Mean": data.Mean, "Median": data.Median,
+            "Variance": data.Variance, "Tendency": data.Tendency
+        }
 
-        # Debug: see the input in the console
-        print("DEBUG — Input to model:", X)
+        X = pd.DataFrame([input_dict])
 
-        # Run prediction
+        print("DEBUG — Input shape:", X.shape)
+        print("DEBUG — Columns:", X.columns.tolist())
+
         y_pred = model.predict(X)
-
-        # Debug: see model output
-        print("DEBUG — Raw prediction:", y_pred)
-
-        # Convert prediction to readable label
         result = label_map[int(y_pred[0])]
-
         return {"prediction": result}
 
     except Exception as e:
@@ -75,10 +61,3 @@ def predict(data: InputData):
         print("\n🚨 ERROR TRACEBACK 🚨")
         traceback.print_exc()
         return {"error": str(e)}
-
-# -------------------------------
-# Root endpoint (optional)
-# -------------------------------
-@app.get("/")
-def home():
-    return {"message": "CTG Model Predictor API is running! Go to /docs to test."}
