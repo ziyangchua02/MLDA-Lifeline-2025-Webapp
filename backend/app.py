@@ -12,7 +12,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-model = joblib.load("ctg_best_pipeline_XGB.joblib")
+model = joblib.load("model_compressed.joblib")
 label_map = {0: "Normal", 1: "Suspect", 2: "Pathologic"}
 
 class InputData(BaseModel):
