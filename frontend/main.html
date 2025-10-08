@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CTG Predictor</title>
+    <link rel="stylesheet" href="/frontend/index.css">
+  </head>
+  <body>
+    <header class="nav">
+      <div class="nav__container">
+        <div class="nav__brand">Lifeline</div>
+        <nav class="nav__links">
+          <a href="#">Projects</a>
+          <a href="#">About</a>
+        </nav>
+        <div class="nav__actions">
+          <a class="cta" href="#">Get Started</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <h1>CTG Predictor</h1>
+    <p>Enter the 17 CTG features and click Submit to get an NSP prediction.</p>
+
+    <form id="ctg-form">
+      <div class="groups">
+        <section class="group">
+          <h3>Basic stats</h3>
+          <div class="group-fields">
+            <div class="field"><label for="LB">LB</label><input id="LB" name="LB" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="AC">AC</label><input id="AC" name="AC" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="FM">FM</label><input id="FM" name="FM" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="UC">UC</label><input id="UC" name="UC" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="ASTV">ASTV</label><input id="ASTV" name="ASTV" type="text" inputmode="decimal" required /></div>
+          </div>
+        </section>
+
+        <section class="group">
+          <h3>Variability</h3>
+          <div class="group-fields">
+            <div class="field"><label for="MSTV">MSTV</label><input id="MSTV" name="MSTV" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="ALTV">ALTV</label><input id="ALTV" name="ALTV" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="MLTV">MLTV</label><input id="MLTV" name="MLTV" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="DL">DL</label><input id="DL" name="DL" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="DS">DS</label><input id="DS" name="DS" type="text" inputmode="decimal" required /></div>
+          </div>
+        </section>
+
+        <section class="group">
+          <h3>Histogram</h3>
+          <div class="group-fields">
+            <div class="field"><label for="DP">DP</label><input id="DP" name="DP" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="Width">Width</label><input id="Width" name="Width" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="Mode">Mode</label><input id="Mode" name="Mode" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="Mean">Mean</label><input id="Mean" name="Mean" type="text" inputmode="decimal" required /></div>
+          </div>
+        </section>
+
+        <section class="group">
+          <h3>Summary</h3>
+          <div class="group-fields">
+            <div class="field"><label for="Median">Median</label><input id="Median" name="Median" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="Variance">Variance</label><input id="Variance" name="Variance" type="text" inputmode="decimal" required /></div>
+            <div class="field"><label for="Tendency">Tendency</label><input id="Tendency" name="Tendency" type="text" inputmode="decimal" required /></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <div id="result" style="margin-top: 12px"></div>
+
+    <script src="/frontend/main.js"></script>
+
+  </body>
+</html>
